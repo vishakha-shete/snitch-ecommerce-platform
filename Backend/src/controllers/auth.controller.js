@@ -59,6 +59,7 @@ export const registerUser = async (req, res) => {
 }
 
 export const loginUser = async (req, res) => {
+
     const { email, password } = req.body;
 
     const user = await userModel.findOne({ email });
@@ -74,4 +75,10 @@ export const loginUser = async (req, res) => {
     }
 
     await sendTokenResponse(user, res, 'User logged in successfully');
+}
+
+export const GoogleCallback = async (req,res)=>{
+    console.log(req.user);
+    res.redirect("http://localhost:5173/dashboard")
+    
 }
