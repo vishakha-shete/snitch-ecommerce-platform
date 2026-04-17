@@ -273,7 +273,7 @@ const Register = () => {
         </motion.div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .input-field {
           width: 100%;
           padding: 0.875rem 1rem;
