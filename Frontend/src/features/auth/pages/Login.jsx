@@ -271,8 +271,10 @@ const Login = () => {
             </div>
 
             {/* Google */}
+            {/* Bug fix: added onClick — button previously did nothing on click */}
             <button
               type="button"
+              onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
               className="w-full h-12 border border-white/10 rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all text-sm font-medium"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">

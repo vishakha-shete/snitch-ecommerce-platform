@@ -2,15 +2,15 @@ import UserModel from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config.js";
 
-async function sendTokenResponse( user, res , message){
+async function sendTokenResponse(user, res, message) {
 
-    const token = jwt.sign({ 
-        id: user._id }, 
+    const token = jwt.sign({
+        id: user._id },
         config.JWT_SECRET, {
             expiresIn: "7d"
     });
 
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true });
 
     res.status(200).json({
         message,
@@ -28,7 +28,7 @@ async function sendTokenResponse( user, res , message){
 }
 
 export const registerUser = async (req, res) => {
-    const { fullname, email, password, contact , isSeller} = req.body;
+    const { fullname, email, password, contact, isSeller } = req.body;
 
     try {
         const existingUser = await UserModel.findOne({
@@ -62,7 +62,8 @@ export const loginUser = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await userModel.findOne({ email });
+    // Bug fix: was 'userModel' (undefined) — should be 'UserModel'
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
         return res.status(400).json({ message: 'Invalid email or password' });
@@ -77,8 +78,44 @@ export const loginUser = async (req, res) => {
     await sendTokenResponse(user, res, 'User logged in successfully');
 }
 
-export const GoogleCallback = async (req,res)=>{
-    console.log(req.user);
-    res.redirect("http://localhost:5173/dashboard")
-    
+// Google OAuth callback — finds or creates user, then issues a JWT and redirects to frontend
+export const GoogleCallback = async (req, res) => {
+    try {
+        const profile = req.user; // set by passport with session: false
+        const email = profile.emails?.[0]?.value;
+        const fullname = profile.displayName;
+        const googleId = profile.id;
+
+        if (!email) {
+            return res.redirect('http://localhost:5173/login?error=no_email');
+        }
+
+        // Find existing user or create a new one
+        let user = await UserModel.findOne({ $or: [{ googleId }, { email }] });
+
+        if (!user) {
+            user = await UserModel.create({
+                fullname,
+                email,
+                googleId,
+                role: 'buyer',
+                // contact and password are optional for Google OAuth users
+            });
+        } else if (!user.googleId) {
+            // Existing email-based user — link their Google account
+            user.googleId = googleId;
+            await user.save();
+        }
+
+        const token = jwt.sign({ id: user._id }, config.JWT_SECRET, { expiresIn: '7d' });
+
+        res.cookie('token', token, { httpOnly: true });
+
+        // Redirect to frontend dashboard with token in query (frontend can store it)
+        res.redirect(`http://localhost:5173/?token=${token}`);
+
+    } catch (error) {
+        console.error('Google callback error:', error);
+        res.redirect('http://localhost:5173/login?error=google_auth_failed');
+    }
 }

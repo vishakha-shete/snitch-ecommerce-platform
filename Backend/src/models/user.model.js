@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-    name: {
+    fullname: {
         type: String,
         required: true,
     },
@@ -13,24 +13,30 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: false, // optional for Google OAuth users
     },
-    contact:{
+    contact: {
         type: String,
-        required: true,
+        required: false, // optional for Google OAuth users
     },
     role: {
         type: String,
         enum: ['buyer', 'seller'],
         default: 'buyer',
     },
+    googleId: {
+        type: String,
+        required: false,
+    },
 });
 
-userSchema.pre('save', async function () {
-    if (!this.isModified('password')) return next();
+// Bug fix: 'next' was never declared as a parameter but was called
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password') || !this.password) return next();
 
     const hash = await bcrypt.hash(this.password, 10);
     this.password = hash;
+    next();
 });
 
 userSchema.methods.comparePassword = async function (password) {
