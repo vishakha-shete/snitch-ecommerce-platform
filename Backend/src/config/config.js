@@ -15,6 +15,12 @@ if (!process.env.GOOGLE_CLIENT_ID) {
 if (!process.env.GOOGLE_CLIENT_SECRET) {
     console.error("Error: GOOGLE_CLIENT_SECRET is not defined in environment variables.");
 }
+if (!process.env.GOOGLE_CALLBACK_URL) {
+    console.error("Error: GOOGLE_CALLBACK_URL is not defined in environment variables.");
+}
+if (!process.env.ImageKit_private_key) {
+    console.error("Error: ImageKit_private_key is not defined in environment variables.");
+}
 
 
 export const config = {
@@ -23,4 +29,5 @@ export const config = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
+    ImageKit_private_key: process.env.ImageKit_private_key
 }; 
