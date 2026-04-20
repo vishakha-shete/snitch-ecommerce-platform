@@ -59,23 +59,26 @@ export const registerUser = async (req, res) => {
 }
 
 export const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-    const { email, password } = req.body;
+        const user = await UserModel.findOne({ email });
 
-    // Bug fix: was 'userModel' (undefined) — should be 'UserModel'
-    const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
 
-    if (!user) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+
+        await sendTokenResponse(user, res, 'User logged in successfully');
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    const isMatch = await user.comparePassword(password);
-
-    if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    await sendTokenResponse(user, res, 'User logged in successfully');
 }
 
 // Google OAuth callback — finds or creates user, then issues a JWT and redirects to frontend

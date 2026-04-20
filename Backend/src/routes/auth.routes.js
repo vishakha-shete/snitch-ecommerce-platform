@@ -13,7 +13,6 @@ router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-// Bug fix: use session: false (no express-session configured), and use GoogleCallback controller
 router.get('/google/callback',
     passport.authenticate('google', {
         failureRedirect: 'http://localhost:5173/login?error=google_auth_failed',

@@ -8,8 +8,9 @@ export const validateRegisterUser = [
     body('contact').notEmpty().withMessage('Contact number is required')
         .matches(/^[0-9]{10,15}$/).withMessage('Contact number must be 10-15 digits'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
-     body("isSeller")
-    .isBoolean().withMessage("isSeller must be a boolean value"),
+    body("isSeller")
+        .optional()
+        .toBoolean(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

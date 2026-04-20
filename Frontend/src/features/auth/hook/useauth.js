@@ -12,9 +12,9 @@ export const useAuth =()=>{
             const data = await register({email,contact,fullname,password, isSeller})
             dispatch(setUser(data.user))
         } catch (err) {
-            const message = err?.response?.data?.message || err.message || "Registration failed";
+            const message = err?.message || "Registration failed";
             dispatch(setError(message));
-            throw new Error(message);
+            throw err; // Throw the original error object (which contains .errors if from express-validator)
         } finally {
             dispatch(setLoading(false));
         }
@@ -26,9 +26,9 @@ export const useAuth =()=>{
             const data = await login({email,password})
             dispatch(setUser(data.user))
         } catch (err) {
-            const message = err?.response?.data?.message || err.message || "Login failed";
+            const message = err?.message || "Login failed";
             dispatch(setError(message));
-            throw new Error(message);
+            throw err;
         } finally {
             dispatch(setLoading(false));
         }

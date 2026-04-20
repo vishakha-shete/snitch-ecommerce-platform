@@ -52,17 +52,32 @@ const Register = () => {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  console.log("FORM DATA 👉", formData); // debug
+
+  if (!validate()) return; // 🔥 IMPORTANT
+
+  try {
+    setLoading(true);
+
     await handleRegister({
+      fullname: formData.fullname,
       email: formData.email,
-      contact:formData.contact,
-      password:formData.password,
-      isSeller:formData.isSeller,
-      fullname:formData.fullname
-    })
+      contact: formData.contact,
+      password: formData.password,
+      isSeller: formData.isSeller
+    });
+
     navigate("/");
-  };
+    } catch (err) {
+      const errorMsg = err?.errors?.[0]?.msg || err?.message || "Registration failed";
+      setServerError(errorMsg);
+    } finally {
+    setLoading(false);
+  }
+};
 
   const strength = getPasswordStrength(formData.password);
 
@@ -71,18 +86,18 @@ const Register = () => {
       <div className="aurora-bg"></div>
 
       {/* LEFT SIDE - BRANDING */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="hidden lg:flex w-7/12 relative items-center justify-center"
       >
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center grayscale brightness-[0.3]"
           style={{ backgroundImage: 'url("/auth-bg.png")' }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
-        
+
         <div className="z-10 px-16 max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -96,7 +111,7 @@ const Register = () => {
             <span className="text-xl font-bold tracking-widest">SNITCH</span>
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -104,7 +119,7 @@ const Register = () => {
           >
             JOIN THE<br />ELITE<span className="text-[#facd15]">.</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
@@ -117,7 +132,7 @@ const Register = () => {
 
       {/* RIGHT SIDE - FORM */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 z-10 bg-black/50 backdrop-blur-sm">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -130,7 +145,7 @@ const Register = () => {
 
           <AnimatePresence mode="wait">
             {serverError && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -196,33 +211,37 @@ const Register = () => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              
+
               {/* Password Strength Indictor */}
               <div className="mt-3">
                 <div className="flex gap-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
-                    animate={{ 
-                      width: `${strength}%`, 
-                      backgroundColor: strength > 66 ? '#10b981' : strength > 33 ? '#facc15' : '#ef4444' 
-                    }} 
+                    animate={{
+                      width: `${strength}%`,
+                      backgroundColor: strength > 66 ? '#10b981' : strength > 33 ? '#facc15' : '#ef4444'
+                    }}
                     className="h-full transition-all duration-500"
                   />
                 </div>
                 <div className="flex justify-between text-[9px] mt-1.5 uppercase tracking-widest font-bold">
-                   <span className="text-gray-500">Security:</span>
-                   <span style={{ color: strength > 66 ? '#10b981' : strength > 33 ? '#facc15' : '#ef4444' }}>
-                     {strength > 66 ? 'Strong' : strength > 33 ? 'Medium' : 'Weak'}
-                   </span>
+                  <span className="text-gray-500">Security:</span>
+                  <span style={{ color: strength > 66 ? '#10b981' : strength > 33 ? '#facc15' : '#ef4444' }}>
+                    {strength > 66 ? 'Strong' : strength > 33 ? 'Medium' : 'Weak'}
+                  </span>
                 </div>
               </div>
             </InputWrapper>
 
-            <label className="flex items-center gap-3 cursor-pointer group w-fit select-none">
-              <input 
-                type="checkbox" 
-                name="isSeller" 
-                className="hidden" 
+            <label 
+              htmlFor="isSeller"
+              className="flex items-center gap-3 cursor-pointer group w-fit select-none"
+            >
+              <input
+                id="isSeller"
+                type="checkbox"
+                name="isSeller"
+                className="hidden"
                 checked={formData.isSeller}
                 onChange={handleChange}
               />
@@ -254,13 +273,13 @@ const Register = () => {
             </div>
 
             <button type="button" onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'} className="w-full h-12 border border-white/10 rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all text-sm font-medium">
-               <svg className="w-4 h-4" viewBox="0 0 24 24">
-                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                 <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                 <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26.81-.58z" />
-                 <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-               </svg>
-               Continue with Google
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26.81-.58z" />
+                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+              Continue with Google
             </button>
           </form>
 
@@ -305,7 +324,7 @@ const InputWrapper = ({ label, error, children }) => (
       <label className="text-[10px] uppercase tracking-widest font-bold text-gray-500">{label}</label>
       <AnimatePresence>
         {error && (
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}

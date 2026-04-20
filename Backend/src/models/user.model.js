@@ -13,7 +13,9 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: false, // optional for Google OAuth users
+        required: function(){
+            return !this.googleId;
+        }
     },
     contact: {
         type: String,
@@ -31,12 +33,10 @@ const userSchema = new mongoose.Schema({
 });
 
 // Bug fix: 'next' was never declared as a parameter but was called
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password') || !this.password) return next();
+userSchema.pre('save', async function () {
+    if (!this.isModified('password') || !this.password) return;
 
-    const hash = await bcrypt.hash(this.password, 10);
-    this.password = hash;
-    next();
+    this.password = await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods.comparePassword = async function (password) {

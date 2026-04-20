@@ -47,7 +47,8 @@ const Login = () => {
       await handleLogin({ email: formData.email, password: formData.password });
       navigate("/");
     } catch (err) {
-      setServerError(err?.message || "Invalid credentials. Please try again.");
+      const errorMsg = err?.errors?.[0]?.msg || err?.message || "Invalid credentials. Please try again.";
+      setServerError(errorMsg);
     } finally {
       setLoading(false);
     }
