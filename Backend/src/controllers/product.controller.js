@@ -1,16 +1,14 @@
 import ProductModel from "../models/product.model.js";
-import { uploadfile } from "../services/storage.service.js";
+import { uploadFile } from "../services/storage.service.js";
 
-export async function createProduct(req,res) {
+export async function createProduct(req, res) {
     
     const {title, description , priceAmount, priceCurrency} = req.body;
-    const sellerId = req.user._id;
+    const seller = req.user;
 
     const images = await Promise.all(req.files.map(async(file)=>{
-        return await uploadfile({
-            buffer: file.buffer,
-            fileName: file.originalname
-        })
+        const result = await uploadFile(file.buffer, file.originalname);
+        return { url: result.url };
     }))
 
     const product = await ProductModel.create({
@@ -21,7 +19,7 @@ export async function createProduct(req,res) {
             currency: priceCurrency || "INR"
         },
         images,
-        seller: sellerId
+        seller: seller._id
     })
     res.status(201).json({
         message: "product created successfully",

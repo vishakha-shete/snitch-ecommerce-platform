@@ -19,7 +19,7 @@ const router = express.Router();
 * @description create a new product
 * @access  private(seller only)
 */
-router.post("/" , authenticateseller, createProductValidator, upload.array('images', 7), createProduct)
+router.post("/", authenticateseller,createProductValidator , upload.array('images', 7), createProduct)
 
 
 /**

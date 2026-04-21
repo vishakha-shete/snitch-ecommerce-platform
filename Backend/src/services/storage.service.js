@@ -6,8 +6,8 @@ const client = new ImageKit({
 });
 
 
-export async function uploadfile(buffer, filename, folder="snitch-e-commerce") {
-    const result = await client.upload({
+export async function uploadFile(buffer, fileName, folder="snitch-e-commerce") {
+    const result = await client.files.upload({
         file: await ImageKit.toFile(buffer),
         fileName,
         folder

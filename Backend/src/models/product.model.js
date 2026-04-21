@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    
+
     title: {
         type: String,
         required: true
     },
     description: {
-        type: String
+        type: String,
+        required: true
     },
     seller: {
         type: mongoose.Schema.Types.ObjectId,
@@ -31,12 +32,9 @@ const productSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            alt: {
-                type: String
-            }
         }
     ]
-},{timestamps: true});
+}, { timestamps: true });
 
 const ProductModel = mongoose.model("Product", productSchema);
 
