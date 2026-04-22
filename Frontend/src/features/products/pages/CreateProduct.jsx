@@ -1,18 +1,24 @@
 import React, { useState, useRef } from 'react';
 import { useProduct } from '../hooks/use.Product';
 import { X, Loader2, ImagePlus } from 'lucide-react';
+import { useNavigate } from 'react-router';
+
 
 const CreateProduct = () => {
+
     const { handleCreateProduct } = useProduct();
-    const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
+
         title: '',
         description: '',
         priceAmount: '',
         priceCurrency: 'INR'
     });
-    
+
     const fileInputRef = useRef(null);
 
     const handleChange = (e) => {
@@ -26,11 +32,11 @@ const CreateProduct = () => {
             alert('You can only upload up to 7 images.');
             return;
         }
-        
+
         const newImages = selectedFiles.map(file => Object.assign(file, {
             preview: URL.createObjectURL(file)
         }));
-        
+
         setImages(prev => [...prev, ...newImages]);
     };
 
@@ -46,9 +52,9 @@ const CreateProduct = () => {
     const handleDrop = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const droppedFiles = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        
+
         if (images.length + droppedFiles.length > 7) {
             alert('You can only upload up to 7 images.');
             return;
@@ -63,28 +69,28 @@ const CreateProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setIsSubmitting(true);
 
         const data = new FormData();
         data.append('title', formData.title);
         data.append('description', formData.description);
         data.append('priceAmount', formData.priceAmount);
         data.append('priceCurrency', formData.priceCurrency);
-        
+
         images.forEach(image => {
             data.append('images', image);
         });
 
         try {
             await handleCreateProduct(data);
-            // reset form or redirect
+            navigate('/');
             setFormData({ title: '', description: '', priceAmount: '', priceCurrency: 'INR' });
             setImages([]);
         } catch (error) {
 
             console.error("Failed to create product:", error);
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -98,9 +104,9 @@ const CreateProduct = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col flex-grow min-h-0">
-                    
+
                     <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 flex-grow min-h-0 overflow-y-auto lg:overflow-hidden pb-4 lg:pb-0 scrollbar-thin [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
-                        
+
                         {/* Left Column: Form Fields */}
                         <div className="flex flex-col space-y-4 lg:overflow-y-auto lg:pr-2 scrollbar-thin [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
                             {/* Title */}
@@ -177,12 +183,11 @@ const CreateProduct = () => {
                                 <label className="block text-sm font-medium text-gray-300">Product Images</label>
                                 <span className="text-xs text-gray-400">{images.length} / 7</span>
                             </div>
-                            
+
                             <div className="flex-grow overflow-y-auto lg:pr-2 space-y-3 scrollbar-thin [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
-                                <div 
-                                    className={`border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 flex flex-col items-center justify-center min-h-[140px] flex-shrink-0 ${
-                                        images.length < 7 ? 'border-white/20 hover:border-[#facd15]/50 hover:bg-[#facd15]/5 cursor-pointer' : 'border-white/10 bg-white/5 opacity-50 cursor-not-allowed'
-                                    }`}
+                                <div
+                                    className={`border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 flex flex-col items-center justify-center min-h-[140px] flex-shrink-0 ${images.length < 7 ? 'border-white/20 hover:border-[#facd15]/50 hover:bg-[#facd15]/5 cursor-pointer' : 'border-white/10 bg-white/5 opacity-50 cursor-not-allowed'
+                                        }`}
                                     onDragOver={images.length < 7 ? handleDragOver : undefined}
                                     onDrop={images.length < 7 ? handleDrop : undefined}
                                     onClick={() => images.length < 7 && fileInputRef.current?.click()}
@@ -216,9 +221,9 @@ const CreateProduct = () => {
                                     <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-2 pb-2">
                                         {images.map((img, idx) => (
                                             <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden bg-[#0a0a0a] border border-white/10">
-                                                <img 
-                                                    src={img.preview} 
-                                                    alt={`Preview ${idx + 1}`} 
+                                                <img
+                                                    src={img.preview}
+                                                    alt={`Preview ${idx + 1}`}
                                                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                                 />
                                                 <button
@@ -241,10 +246,10 @@ const CreateProduct = () => {
                     <div className="pt-4 lg:pt-5 border-t border-white/5 mt-auto flex-shrink-0">
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                             className="w-full bg-[#facd15] hover:bg-[#e5bc13] text-black font-semibold py-3.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(250,205,21,0.15)] hover:shadow-[0_0_20px_rgba(250,205,21,0.3)] transform hover:scale-[1.005] active:scale-[0.99]"
                         >
-                            {isLoading ? (
+                            {isSubmitting ? (
                                 <>
                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                     Creating Product...
