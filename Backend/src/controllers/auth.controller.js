@@ -5,9 +5,10 @@ import { config } from "../config/config.js";
 async function sendTokenResponse(user, res, message) {
 
     const token = jwt.sign({
-        id: user._id },
+        id: user._id
+    },
         config.JWT_SECRET, {
-            expiresIn: "7d"
+        expiresIn: "7d"
     });
 
     res.cookie("token", token, { httpOnly: true });
@@ -122,3 +123,32 @@ export const GoogleCallback = async (req, res) => {
         res.redirect('http://localhost:5173/login?error=google_auth_failed');
     }
 }
+
+
+export const getMe = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        const user = req.user;
+
+        res.status(200).json({
+            message: "user fetched successfully",
+            success: true,
+            user: {
+                id: user._id,
+                email: user.email,
+                contact: user.contact,
+                fullname: user.fullname,
+                role: user.role
+            }
+        });
+
+    } catch (error) {
+        console.error("GET ME ERROR:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};

@@ -45,8 +45,12 @@ const Login = () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      await handleLogin({ email: formData.email, password: formData.password });
-      navigate("/");
+      const user = await handleLogin({ email: formData.email, password: formData.password });
+      if (user.role == "buyer") {
+        navigate("/");
+      } else if (user.role == "seller") {
+        navigate("/seller/dashboard")
+      }
     } catch (err) {
       const errorMsg = err?.errors?.[0]?.msg || err?.message || "Invalid credentials. Please try again.";
       setServerError(errorMsg);

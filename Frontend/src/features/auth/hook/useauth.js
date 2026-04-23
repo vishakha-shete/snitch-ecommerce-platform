@@ -1,15 +1,16 @@
 import { setError, setLoading, setUser } from "../../state/auth.slice";
-import { register ,login} from "../../services/auth.api";
+import { register, login, getMe } from "../../services/auth.api";
 import { useDispatch } from "react-redux";
 
-export const useAuth =()=>{
+export const useAuth = () => {
 
     const dispatch = useDispatch();
 
-    async function handleRegister({email,contact,fullname,password, isSeller = false}){
+    async function handleRegister({ email, contact, fullname, password, isSeller = false }) {
+        let data;
         try {
             dispatch(setLoading(true));
-            const data = await register({email,contact,fullname,password, isSeller})
+            data = await register({ email, contact, fullname, password, isSeller })
             dispatch(setUser(data.user))
         } catch (err) {
             const message = err?.message || "Registration failed";
@@ -18,12 +19,14 @@ export const useAuth =()=>{
         } finally {
             dispatch(setLoading(false));
         }
+        return data?.user;
     }
 
-    async function handleLogin({email,password}){
+    async function handleLogin({ email, password }) {
+        let data;
         try {
             dispatch(setLoading(true));
-            const data = await login({email,password})
+            data = await login({ email, password })
             dispatch(setUser(data.user))
         } catch (err) {
             const message = err?.message || "Login failed";
@@ -32,10 +35,22 @@ export const useAuth =()=>{
         } finally {
             dispatch(setLoading(false));
         }
+        return data?.user;
     }
 
+    async function handleGetMe() {
+        try {
+            dispatch(setLoading(true))
+            const data = await getMe()
+            dispatch(setUser(data.user))
+        } catch (err) {
+            console.log(err);
+        } finally {
+            dispatch(setLoading(false))
+        }
+    }
 
     return {
-        handleRegister , handleLogin
+        handleRegister, handleLogin, handleGetMe
     }
-}
+}

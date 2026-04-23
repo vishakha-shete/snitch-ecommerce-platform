@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { loginUser, registerUser, GoogleCallback } from "../controllers/auth.controller.js";
+import { loginUser, registerUser, GoogleCallback, getMe } from "../controllers/auth.controller.js";
 import { validateRegisterUser, validateLoginUser } from "../validator/auth.validator.js";
 import passport from "passport";
+import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -20,5 +21,14 @@ router.get('/google/callback',
     }),
     GoogleCallback
 );
+
+
+/**
+ * @route GET/API/auth/me
+ * @description get Current Logged in user info
+ * @access Protected
+ * @middleware authMiddle
+ */
+router.get('/me', authenticateUser, getMe)
 
 export default router;
