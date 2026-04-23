@@ -1,5 +1,6 @@
 import ImageKit, { toFile } from '@imagekit/nodejs';
 import { config } from '../config/config.js';
+import productApiInstance from '../../../Frontend/src/features/products/services/product.api.js';
 
 const client = new ImageKit({
   privateKey: config.ImageKit_private_key,
