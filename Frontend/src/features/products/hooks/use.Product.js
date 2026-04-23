@@ -3,7 +3,6 @@ import {useDispatch} from "react-redux"
 import { setSellerProducts } from "../state/product.slice"
 
 
-
 export const useProduct = () => {
 
     const dispatch =  useDispatch()
@@ -15,12 +14,14 @@ export const useProduct = () => {
 
     async function handleGetSellerProduct() {
         const data = await getSellerProduct()
-        dispatch(setSellerProducts(data.product))
+        dispatch(setSellerProducts(data.products));
         return data.products
     }
 
     return {handleCreateProduct, handleGetSellerProduct}
 
 }
+
+
 
 
