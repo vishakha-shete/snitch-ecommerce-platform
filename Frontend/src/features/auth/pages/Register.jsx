@@ -132,89 +132,93 @@ const handleSubmit = async (e) => {
       </motion.div>
 
       {/* RIGHT SIDE - FORM */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 z-10 bg-black/50 backdrop-blur-sm">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 z-10 bg-black/50 backdrop-blur-sm overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full max-w-xl glass-premium p-8 lg:p-10 rounded-[2rem] border border-white/10"
+          className="w-full max-w-xl glass-premium p-8 lg:p-10 rounded-[2.5rem] border border-white/10 flex flex-col max-h-[min(90vh,800px)] overflow-hidden"
         >
-          <header className="mb-8">
-            <h2 className="text-4xl font-bold tracking-tight mb-2">Create Account</h2>
-            <p className="text-gray-400 font-light">Join the movement today.</p>
+          <header className="mb-4 flex-shrink-0">
+            <h2 className="text-3xl font-black tracking-tight mb-1">Create Account</h2>
+            <p className="text-gray-500 font-medium text-[13px]">Join the movement and start your journey.</p>
           </header>
 
-          <AnimatePresence mode="wait">
-            {serverError && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-sm"
-              >
-                <AlertCircle size={18} />
-                {serverError}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <InputWrapper label="Full Name" error={errors.fullname}>
-                <input
-                  type="text"
-                  name="fullname"
-                  value={formData.fullname}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  className="input-field"
-                />
-              </InputWrapper>
-              <InputWrapper label="Email Address" error={errors.email}>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@example.com"
-                  className="input-field"
-                />
-              </InputWrapper>
-            </div>
-
-            <InputWrapper label="Contact Number" error={errors.contact}>
-              <input
-                type="tel"
-                name="contact"
-                maxLength="10"
-                value={formData.contact}
-                onChange={handleChange}
-                placeholder="9876543210"
-                className="input-field"
-              />
-            </InputWrapper>
-
-            <InputWrapper label="Secure Password" error={errors.password}>
-              <div className="relative group">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="input-field pr-12 w-full"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+          <div className="flex-grow">
+            <AnimatePresence mode="wait">
+              {serverError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-xs"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+                  <AlertCircle size={16} />
+                  {serverError}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputWrapper label="Full Name" error={errors.fullname}>
+                  <input
+                    type="text"
+                    name="fullname"
+                    value={formData.fullname}
+                    onChange={handleChange}
+                    placeholder="e.g. John Doe"
+                    className="input-field py-2.5"
+                  />
+                </InputWrapper>
+                <InputWrapper label="Email Address" error={errors.email}>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="e.g. john@snitch.com"
+                    className="input-field py-2.5"
+                  />
+                </InputWrapper>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputWrapper label="Contact" error={errors.contact}>
+                  <input
+                    type="tel"
+                    name="contact"
+                    maxLength="10"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    placeholder="9876543210"
+                    className="input-field py-2.5"
+                  />
+                </InputWrapper>
+
+                <InputWrapper label="Password" error={errors.password}>
+                  <div className="relative group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="••••••••"
+                      className="input-field pr-10 w-full py-2.5"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </InputWrapper>
               </div>
 
               {/* Password Strength Indictor */}
-              <div className="mt-3">
+              <div className="pb-1">
                 <div className="flex gap-1 h-1 bg-white/5 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
@@ -225,60 +229,60 @@ const handleSubmit = async (e) => {
                     className="h-full transition-all duration-500"
                   />
                 </div>
-                <div className="flex justify-between text-[9px] mt-1.5 uppercase tracking-widest font-bold">
-                  <span className="text-gray-500">Security:</span>
+                <div className="flex justify-between text-[8px] mt-1 uppercase tracking-widest font-bold">
+                  <span className="text-gray-600">Security:</span>
                   <span style={{ color: strength > 66 ? '#10b981' : strength > 33 ? '#facc15' : '#ef4444' }}>
                     {strength > 66 ? 'Strong' : strength > 33 ? 'Medium' : 'Weak'}
                   </span>
                 </div>
               </div>
-            </InputWrapper>
 
-            <label 
-              htmlFor="isSeller"
-              className="flex items-center gap-3 cursor-pointer group w-fit select-none"
-            >
-              <input
-                id="isSeller"
-                type="checkbox"
-                name="isSeller"
-                className="hidden"
-                checked={formData.isSeller}
-                onChange={handleChange}
-              />
-              <div className={`w-5 h-5 rounded border ${formData.isSeller ? 'bg-[#facd15] border-[#facd15]' : 'border-white/20'} flex items-center justify-center transition-all group-hover:border-[#facd15]`}>
-                {formData.isSeller && <CheckCircle2 size={14} className="text-black" />}
+              <label 
+                htmlFor="isSeller"
+                className="flex items-center gap-3 cursor-pointer group w-fit select-none"
+              >
+                <input
+                  id="isSeller"
+                  type="checkbox"
+                  name="isSeller"
+                  className="hidden"
+                  checked={formData.isSeller}
+                  onChange={handleChange}
+                />
+                <div className={`w-4 h-4 rounded border ${formData.isSeller ? 'bg-[#facd15] border-[#facd15]' : 'border-white/20'} flex items-center justify-center transition-all group-hover:border-[#facd15]`}>
+                  {formData.isSeller && <CheckCircle2 size={12} className="text-black" />}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">Register as a seller</span>
+              </label>
+
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#facd15] text-black h-12 rounded-xl font-bold text-base flex items-center justify-center gap-2 group transition-opacity disabled:opacity-70 mt-1"
+              >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : (
+                  <>
+                    Create Account
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </motion.button>
+
+              <div className="py-1 flex items-center gap-3">
+                <div className="flex-1 h-[1px] bg-white/5"></div>
+                <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.2em]">Social</span>
+                <div className="flex-1 h-[1px] bg-white/5"></div>
               </div>
-              <span className="text-sm font-light text-gray-400 group-hover:text-white transition-colors">Register as a seller</span>
-            </label>
 
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#facd15] text-black h-14 rounded-xl font-bold text-lg flex items-center justify-center gap-2 group transition-opacity disabled:opacity-70"
-            >
-              {loading ? <Loader2 className="animate-spin" /> : (
-                <>
-                  Create Account
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </motion.button>
+            < ContinueWithGoogle/>
+            </form>
+          </div>
 
-            <div className="py-2 flex items-center gap-4">
-              <div className="flex-1 h-[1px] bg-white/5"></div>
-              <span className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Social Connect</span>
-              <div className="flex-1 h-[1px] bg-white/5"></div>
-            </div>
-
-          < ContinueWithGoogle/>
-          </form>
-
-          <p className="mt-8 text-center text-sm text-gray-500">
-            Already a member?{" "}
-            <Link to="/login" className="text-[#facd15] font-semibold hover:underline underline-offset-4">
+          <p className="mt-6 text-center text-[10px] text-gray-600 uppercase tracking-widest flex-shrink-0">
+            Member?{" "}
+            <Link to="/login" className="text-[#facd15] font-bold hover:underline underline-offset-4 ml-1">
               Sign in
             </Link>
           </p>

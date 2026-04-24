@@ -125,6 +125,19 @@ export const GoogleCallback = async (req, res) => {
 }
 
 
+export const logoutUser = async (req, res) => {
+    try {
+        res.clearCookie("token");
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully"
+        });
+    } catch (error) {
+        console.error("LOGOUT ERROR:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 export const getMe = async (req, res) => {
     try {
         if (!req.user) {

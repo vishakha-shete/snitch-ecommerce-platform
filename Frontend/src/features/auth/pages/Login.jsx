@@ -122,171 +122,171 @@ const Login = () => {
       </motion.div>
 
       {/* ── RIGHT SIDE – FORM ── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 z-10 bg-black/50 backdrop-blur-sm">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 z-10 bg-black/50 backdrop-blur-sm overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full max-w-xl glass-premium p-8 lg:p-10 rounded-[2rem] border border-white/10"
+          className="w-full max-w-xl glass-premium p-8 lg:p-10 rounded-[2.5rem] border border-white/10 flex flex-col max-h-[min(90vh,800px)] overflow-hidden"
         >
           {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2 mb-8">
+          <div className="flex lg:hidden items-center gap-2 mb-6 flex-shrink-0">
             <div className="w-8 h-8 bg-[#facd15] rounded-md flex items-center justify-center">
               <div className="w-4 h-4 bg-black rounded-sm rotate-45" />
             </div>
             <span className="text-base font-bold tracking-widest">SNITCH</span>
           </div>
 
-          <header className="mb-8">
-            <h2 className="text-4xl font-bold tracking-tight mb-2">Sign In</h2>
-            <p className="text-gray-400 font-light">
-              Access your exclusive account.
+          <header className="mb-4 flex-shrink-0">
+            <h2 className="text-3xl font-black tracking-tight mb-1">Sign In</h2>
+            <p className="text-gray-500 font-medium text-[13px]">
+              Enter your credentials to access your account.
             </p>
           </header>
 
-          {/* Server-side error banner */}
-          <AnimatePresence mode="wait">
-            {serverError && (
-              <motion.div
-                key="server-error"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-sm"
-              >
-                <AlertCircle size={18} />
-                {serverError}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-            {/* Email */}
-            <InputWrapper label="Email Address" error={errors.email}>
-              <input
-                id="login-email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="john@example.com"
-                autoComplete="email"
-                className="input-field"
-              />
-            </InputWrapper>
-
-            {/* Password */}
-            <InputWrapper label="Password" error={errors.password}>
-              <div className="relative group">
-                <input
-                  id="login-password"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  className="input-field pr-12 w-full"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+          <div className="flex-grow">
+            {/* Server-side error banner */}
+            <AnimatePresence mode="wait">
+              {serverError && (
+                <motion.div
+                  key="server-error"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-xs"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </InputWrapper>
-
-            {/* Remember me + Forgot password */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-3 cursor-pointer group w-fit select-none">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  className="hidden"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                />
-                <div
-                  className={`w-5 h-5 rounded border flex items-center justify-center transition-all group-hover:border-[#facd15] ${formData.rememberMe
-                    ? "bg-[#facd15] border-[#facd15]"
-                    : "border-white/20"
-                    }`}
-                >
-                  {formData.rememberMe && (
-                    <svg
-                      className="w-3 h-3 text-black"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-sm font-light text-gray-400 group-hover:text-white transition-colors">
-                  Remember me
-                </span>
-              </label>
-
-              <Link
-                to="/forgot-password"
-                className="text-sm text-[#facd15] hover:underline underline-offset-4 font-medium transition-opacity hover:opacity-80"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Submit */}
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              type="submit"
-              id="login-submit"
-              disabled={loading}
-              className="w-full bg-[#facd15] text-black h-14 rounded-xl font-bold text-lg flex items-center justify-center gap-2 group transition-opacity disabled:opacity-70 mt-2"
-            >
-              {loading ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  Sign In
-                  <ArrowRight
-                    size={20}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </>
+                  <AlertCircle size={16} />
+                  {serverError}
+                </motion.div>
               )}
-            </motion.button>
+            </AnimatePresence>
 
-            {/* Divider */}
-            <div className="py-2 flex items-center gap-4">
-              <div className="flex-1 h-[1px] bg-white/5" />
-              <span className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">
-                Social Connect
-              </span>
-              <div className="flex-1 h-[1px] bg-white/5" />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
+              {/* Email */}
+              <InputWrapper label="Email Address" error={errors.email}>
+                <input
+                  id="login-email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="e.g. alex@snitch.com"
+                  autoComplete="email"
+                  className="input-field py-2.5"
+                />
+              </InputWrapper>
 
-            {/* Google */}
-            {/* Bug fix: added onClick — button previously did nothing on click */}
-            < ContinueWithGoogle />
-          </form>
+              {/* Password */}
+              <InputWrapper label="Password" error={errors.password}>
+                <div className="relative group">
+                  <input
+                    id="login-password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    className="input-field pr-12 w-full py-2.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </InputWrapper>
 
-          <p className="mt-8 text-center text-sm text-gray-500">
-            New to SNITCH?{" "}
+              {/* Remember me + Forgot password */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2.5 cursor-pointer group w-fit select-none">
+                  <input
+                    type="checkbox"
+                    name="rememberMe"
+                    className="hidden"
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                  />
+                  <div
+                    className={`w-4 h-4 rounded border flex items-center justify-center transition-all group-hover:border-[#facd15] ${formData.rememberMe
+                      ? "bg-[#facd15] border-[#facd15]"
+                      : "border-white/20"
+                      }`}
+                  >
+                    {formData.rememberMe && (
+                      <svg
+                        className="w-2.5 h-2.5 text-black"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={4}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
+                    Remember
+                  </span>
+                </label>
+
+                <Link
+                  to="/forgot-password"
+                  className="text-[10px] text-[#facd15] hover:underline underline-offset-4 font-bold uppercase tracking-widest transition-opacity hover:opacity-80"
+                >
+                  Forgot?
+                </Link>
+              </div>
+
+              {/* Submit */}
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                id="login-submit"
+                disabled={loading}
+                className="w-full bg-[#facd15] text-black h-12 rounded-xl font-bold text-base flex items-center justify-center gap-2 group transition-opacity disabled:opacity-70 mt-1"
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </>
+                )}
+              </motion.button>
+
+              {/* Divider */}
+              <div className="py-1 flex items-center gap-3">
+                <div className="flex-1 h-[1px] bg-white/5" />
+                <span className="text-[9px] text-gray-700 font-bold uppercase tracking-[0.2em]">
+                  Social
+                </span>
+                <div className="flex-1 h-[1px] bg-white/5" />
+              </div>
+
+              {/* Google */}
+              < ContinueWithGoogle />
+            </form>
+          </div>
+
+          <p className="mt-6 text-center text-[10px] text-gray-600 uppercase tracking-widest flex-shrink-0">
+            No account?{" "}
             <Link
               to="/register"
-              className="text-[#facd15] font-semibold hover:underline underline-offset-4"
+              className="text-[#facd15] font-bold hover:underline underline-offset-4 ml-1"
             >
-              Create an account
+              Create one
             </Link>
           </p>
         </motion.div>
