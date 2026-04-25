@@ -25,4 +25,19 @@ export async function getProductById(productId){
     return response.data
 }
 
+export async function addVariant(productId, formData) {
+    const response = await productApiInstance.post(`/${productId}/variants`, formData)
+    return response.data
+}
+
+export async function updateVariantStock(productId, variantId, stoks) {
+    const response = await productApiInstance.put(`/${productId}/variants/${variantId}/stock`, { stoks })
+    return response.data
+}
+
+export async function deleteVariant(productId, variantId) {
+    const response = await productApiInstance.delete(`/${productId}/variants/${variantId}`)
+    return response.data
+}
+
 export default productApiInstance
