@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useProduct } from "../hooks/use.Product";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Plus, Package, Edit3, Trash2, Eye } from "lucide-react";
 
 const formatDate = (dateString) => {
@@ -23,6 +23,7 @@ const formatPrice = (amount, currency = "INR") => {
 };
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const { handleGetSellerProduct } = useProduct();
     const sellerProducts = useSelector(
         (state) => state.product?.sellerProducts || []
@@ -81,7 +82,10 @@ const Dashboard = () => {
                                     className="group bg-white/[0.02] border border-white/10 rounded-2xl p-4 hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#facd15]/5 transition-all duration-300"
                                 >
                                     {/* IMAGE */}
-                                    <div className="relative aspect-square overflow-hidden rounded-xl mb-4 bg-black/40">
+                                    <div 
+                                        onClick={() => navigate(`/seller/product/${product._id}`)}
+                                        className="relative aspect-square overflow-hidden rounded-xl mb-4 bg-black/40 cursor-pointer"
+                                    >
                                         {product.images?.length ? (
                                             <img
                                                 src={product.images[0]?.url}
@@ -96,20 +100,41 @@ const Dashboard = () => {
 
                                         {/* ACTIONS */}
                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-all duration-300 backdrop-blur-sm">
-                                            <button className="p-2.5 bg-white/10 rounded-full hover:bg-[#facd15] hover:text-black transition-colors">
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Add edit logic here if needed
+                                                }}
+                                                className="p-2.5 bg-white/10 rounded-full hover:bg-[#facd15] hover:text-black transition-colors"
+                                            >
                                                 <Edit3 className="w-4 h-4" />
                                             </button>
-                                            <button className="p-2.5 bg-white/10 rounded-full hover:bg-white hover:text-black transition-colors">
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/seller/product/${product._id}`);
+                                                }}
+                                                className="p-2.5 bg-white/10 rounded-full hover:bg-white hover:text-black transition-colors"
+                                            >
                                                 <Eye className="w-4 h-4" />
                                             </button>
-                                            <button className="p-2.5 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-colors">
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Add delete logic here
+                                                }}
+                                                className="p-2.5 bg-red-500/20 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-colors"
+                                            >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
 
                                     {/* CONTENT */}
-                                    <h3 className="font-bold text-base truncate mb-1">
+                                    <h3 
+                                        onClick={() => navigate(`/seller/product/${product._id}`)}
+                                        className="font-bold text-base truncate mb-1 cursor-pointer hover:text-[#facd15] transition-colors"
+                                    >
                                         {product.title}
                                     </h3>
 

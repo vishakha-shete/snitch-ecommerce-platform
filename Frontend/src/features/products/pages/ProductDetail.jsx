@@ -10,6 +10,19 @@ const ProductDetail = () => {
 
   const { handleGetProductById } = useProduct();
 
+  const handleNextImage = () => {
+    if (product?.images?.length > 1) {
+      setActiveImageIndex((prev) => (prev + 1) % product.images.length);
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (product?.images?.length > 1) {
+      setActiveImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    }
+  };
+
+
   useEffect(() => {
     async function fetchProductDetails() {
       setLoading(true);
@@ -90,6 +103,36 @@ const ProductDetail = () => {
                                 alt={product.title} 
                                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                             />
+
+                            {/* Navigation Arrows */}
+                            {images.length > 1 && (
+                                <>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handlePrevImage();
+                                        }}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#facd15] hover:text-black hover:border-[#facd15] hover:scale-110 z-10"
+                                        aria-label="Previous image"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleNextImage();
+                                        }}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#facd15] hover:text-black hover:border-[#facd15] hover:scale-110 z-10"
+                                        aria-label="Next image"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                </>
+                            )}
                         </div>
                         
                         {/* Thumbnails */}
